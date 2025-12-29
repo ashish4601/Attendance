@@ -13,9 +13,10 @@ const createClass = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Name and geofence (lat, lng, radius) are required");
     }
 
-    if (!req.user || !isValidObjectId(req.user._id)) {
+    if (!req.user || !isValidObjectId(req.user._id) || req.user.role !== 'admin') {
         throw new ApiError(401, "Unauthorized");
     }
+
 
     if (
         typeof geofence.lat !== "number" ||
@@ -57,7 +58,7 @@ const addStudentToClass = asyncHandler(async (req, res) => {
     const { classId } = req.params;
     const { studentId } = req.body;
 
-    if (!isValidObjectId(classId) || !isValidObjectId(studentId)) {
+    if (!isValidObjectId(classId) || !isValidObjectId(studentId) || req.user.role !== 'admin') {
         throw new ApiError(400, "Invalid classId or studentId");
     }
 
@@ -85,6 +86,9 @@ const startSession = asyncHandler(async (req, res) => {
 
     if (!isValidObjectId(classId)) {
         throw new ApiError(400, "Invalid classId");
+    }
+    if (req.user.role !== 'admin') {
+        throw new ApiError(403, "Forbidden");
     }
 
     if (!startTime || !endTime || new Date(endTime) <= new Date(startTime)) {
@@ -122,6 +126,9 @@ const endSession = asyncHandler(async (req, res) => {
     const { sessionId } = req.params;
     if (!isValidObjectId(sessionId)) {
         throw new ApiError(400, "Invalid sessionId");
+    }
+    if (req.user.role !== 'admin') {
+        throw new ApiError(403, "Forbidden");
     }
     const session = await Session.findById(sessionId);
     if (!session) {
