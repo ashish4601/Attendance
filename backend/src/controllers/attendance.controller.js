@@ -121,11 +121,21 @@ const getSessionAttendance = asyncHandler(async (req, res) => {
         throw new ApiError(403, "Forbidden");
     }
 
-    const sessionExists = await Session.exists({ _id: sessionId });
-    if (!sessionExists) {
+    const session = await Session.findById(sessionId);
+    if (!session) {
         throw new ApiError(404, "Session not found");
     }
 
+    //  Verify admin owns the class
+    const classObj = await Class.findOne({
+        _id: session.classId,
+        createdBy: req.user._id
+    });
+
+    if (!classObj) {
+        throw new ApiError(403, "You are not authorized to view this session");
+    }
+    //attendance records
     const attendanceRecords = await Attendance.find({ sessionId })
         .populate("userId", "name email");
 
@@ -137,5 +147,6 @@ const getSessionAttendance = asyncHandler(async (req, res) => {
         )
     );
 });
+
 
 export { markAttendance , getSessionAttendance };
