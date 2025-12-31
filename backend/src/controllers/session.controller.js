@@ -48,7 +48,6 @@ const createSession = asyncHandler(async (req, res) => {
         startTime,
         endTime,
         geofence,
-        isActive: false
     });
 
     return res.status(201).json(
@@ -71,14 +70,11 @@ const forceEndSession = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Session not found");
     }
 
-    if (!session.isActive) {
-        throw new ApiError(409, "Session is already inactive");
+    if (new Date() > session.endTime) {
+        throw new ApiError(400, "Session has already ended");
     }
-
-    session.isActive = false;
-    session.endTime = new Date(); // force close
+    session.endTime = new Date();
     await session.save();
-
     return res.status(200).json(
         new ApiResponse(200, session, "Session ended successfully")
     );

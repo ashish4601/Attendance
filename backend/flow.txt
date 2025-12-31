@@ -4,5 +4,7 @@ controllers:
     admin:createUserByAdmin
     class:createClass, addStudentToClass
     session:createSession,forceEndSession
-    student: getStudentClasses
+    student: getStudentClasses,getActiveSessionByClass,getMyAttendance
+    attendance: markAttendance, getSessionAttendance
     user: registerUser, loginUser,logOutUser,refreshAccessToken,changeCurrentPassword,getCurrentUser,updateAccountDetails,updateUserProfileImage,getUserById
+    faceData: enrollFace, getFaceStatus, resetFaceData 

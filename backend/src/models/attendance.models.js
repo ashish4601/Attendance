@@ -8,6 +8,12 @@ const attendanceSchema = new mongoose.Schema(
       required: true,
       index: true
     },
+    classId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Class',
+      required: true,
+      index: true
+    },
 
     sessionId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,26 +22,21 @@ const attendanceSchema = new mongoose.Schema(
       index: true
     },
 
+
     status: {
       type: String,
       enum: ['accepted', 'rejected'],
       required: true
     },
-
-    reason: {
-      type: String,
-      enum: [
-        'FACE_MISMATCH',
-        'GPS_OUTSIDE',
-        'GPS_ACCURACY_LOW',
-        'TIME_WINDOW',
-        'BLINK_FAILED',
-        'DUPLICATE_ATTENDANCE',
-        'NO_ACTIVE_SESSION'
-      ],
-      default: null
+    markedAt: {
+      type: Date,
+      required: true
+    }
+    ,
+    similarityScore: {
+      type: Number,
+      required: true
     },
-
     timestamp: {
       type: Date,
       default: Date.now
@@ -49,4 +50,4 @@ const attendanceSchema = new mongoose.Schema(
 // Prevent duplicate attendance per user per session
 attendanceSchema.index({ userId: 1, sessionId: 1 }, { unique: true });
 
-export default mongoose.model('Attendance', attendanceSchema);
+export const Attendance = mongoose.model('Attendance', attendanceSchema);

@@ -43,20 +43,11 @@ const sessionSchema = new mongoose.Schema(
             type: geofenceSchema,
             required: true
         },
-
-        isActive: {
-            type: Boolean,
-            default: false,
-            index: true
-        }
     },
     { timestamps: true }
 );
 
 
-sessionSchema.index(
-    { classId: 1, isActive: 1 },
-    { unique: true, partialFilterExpression: { isActive: true } }
-);
+sessionSchema.index({ classId: 1, startTime: 1, endTime: 1 });
 
 export const Session = mongoose.model("Session", sessionSchema);

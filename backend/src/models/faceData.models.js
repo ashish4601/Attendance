@@ -19,7 +19,13 @@ const faceDataSchema = new mongoose.Schema(
         },
         message: 'Face embedding must be 128-dimensional'
       }
-    }
+    },
+    enrolledAt: {
+      type: Date,
+      default: Date.now
+    },
+    
+
   },
   {
     timestamps: true
