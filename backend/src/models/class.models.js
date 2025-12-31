@@ -30,21 +30,6 @@ const classSchema = new mongoose.Schema(
             }
         ],
 
-
-        geofence: {
-            lat: {
-                type: Number,
-                required: true
-            },
-            lng: {
-                type: Number,
-                required: true
-            },
-            radius: {
-                type: Number,
-                required: true
-            }
-        }
     },
     { timestamps: true }
 );
@@ -52,4 +37,4 @@ const classSchema = new mongoose.Schema(
 
 classSchema.index({ name: 1, createdBy: 1 }, { unique: true });
 
-export default mongoose.model('Class', classSchema);
+export const Class = mongoose.model('Class', classSchema);

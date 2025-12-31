@@ -1,0 +1,8 @@
+currently we have:
+
+controllers:
+    admin:createUserByAdmin
+    class:createClass, addStudentToClass
+    session:createSession,forceEndSession
+    student: getStudentClasses
+    user: registerUser, loginUser,logOutUser,refreshAccessToken,changeCurrentPassword,getCurrentUser,updateAccountDetails,updateUserProfileImage,getUserById

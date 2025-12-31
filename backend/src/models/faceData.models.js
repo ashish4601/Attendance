@@ -26,4 +26,4 @@ const faceDataSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model('FaceData', faceDataSchema);
+export const FaceData = mongoose.model('FaceData', faceDataSchema);
