@@ -7,6 +7,6 @@ import { getSessionAttendance, markAttendance } from "../controllers/attendance.
 const router = Router();
 
 router.use(verifyJWT);
-router.route('attendance').post(verifyStudent, markAttendance);
-router.route('attendance/sessions/:sessionId').get(verifyAdmin, getSessionAttendance);
+router.route('/mark-attendance').post(verifyStudent, markAttendance);
+router.route('/sessions/:sessionId').get(verifyAdmin, getSessionAttendance);
 export default router;

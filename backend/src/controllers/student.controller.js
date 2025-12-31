@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import { Class } from "../models/class.models.js";
 import { Session } from "../models/session.models.js";
+import { Attendance } from "../models/attendance.models.js";
 import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";

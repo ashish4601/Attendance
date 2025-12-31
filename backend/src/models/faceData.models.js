@@ -10,7 +10,7 @@ const faceDataSchema = new mongoose.Schema(
       index: true
     },
 
-    embedding: {
+    faceEmbedding: {
       type: [Number],
       required: true,
       validate: {

@@ -10,8 +10,8 @@ const router = Router();
 router.use(verifyJWT);
 router.use(verifyAdmin);
 
-router.route('/sessions').post(createSession);
-router.route('/sessions/:sessionId/end').post(forceEndSession);
+router.route('/:classId').post(createSession); 
+router.route('/:sessionId/end').post(forceEndSession);
 
 
 export default router;
