@@ -22,14 +22,13 @@ routes:
     GET    /users/me                   getCurrentUser   verifyJWT
     PATCH  /users/me                   updateAccountDetails   verifyJWT
     PATCH  /users/me/profile-image    updateUserProfileImage   verifyJWT
-    GET    /users/:userId              getUserById  verifyJWT  //may need to delete or cchange
 
   class:
-    POST   /classes                 createClass         verifyJWT, verifyAdmin
+    POST   /classes/add-class                 createClass         verifyJWT, verifyAdmin
     POST   /classes/:classId/students  addStudentToClass    verifyJWT, verifyAdmin
 
   session:
-    POST   /sessions                   createSession    verifyJWT, verifyAdmin
+    POST   /sessions/:classId                   createSession    verifyJWT, verifyAdmin
     PATCH  /sessions/:sessionId/end    forceEndSession  verifyJWT, verifyAdmin
 
   student:
@@ -38,10 +37,10 @@ routes:
     GET    /students/attendance        getMyAttendance          verifyJWT, verifyStudent
 
   attendance:
-    POST   /attendance                 markAttendance                   verifyJWT, verifyStudent
+    POST   /attendance/mark-attendance                 markAttendance                   verifyJWT, verifyStudent
     GET    /attendance/sessions/:sessionId    getSessionAttendance      verifyJWT, verifyAdmin
 
   faceData:
-    POST   /face/enroll                enrollFace       verifyJWT, verifyStudent
-    GET    /face/status                getFaceStatus    verifyJWT, verifyStudent
-    DELETE /face/reset                 resetFaceData    verifyJWT, verifyAdmin
+    POST   /faceData/enroll                enrollFace       verifyJWT, verifyStudent
+    GET    /faceData/status                getFaceStatus    verifyJWT, verifyStudent
+    DELETE /faceData/reset/:studentId                 resetFaceData    verifyJWT, verifyAdmin
