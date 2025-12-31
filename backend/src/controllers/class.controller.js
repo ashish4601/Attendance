@@ -5,9 +5,9 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 const createClass = asyncHandler(async (req, res) => {
-    const { name, description, geofence } = req.body;
+    const { name, description} = req.body;
 
-    if (!name || !geofence?.lat || !geofence?.lng || !geofence?.radius) {
+    if (!name) {
         throw new ApiError(400, "Name and geofence (lat, lng, radius) are required");
     }
 
@@ -15,27 +15,11 @@ const createClass = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Unauthorized");
     }
 
-    if (
-        typeof geofence.lat !== "number" ||
-        typeof geofence.lng !== "number" ||
-        typeof geofence.radius !== "number"
-    ) {
-        throw new ApiError(400, "Geofence values must be numbers");
-    }
-
-    if (
-        geofence.lat < -90 || geofence.lat > 90 ||
-        geofence.lng < -180 || geofence.lng > 180 ||
-        geofence.radius <= 0
-    ) {
-        throw new ApiError(400, "Invalid geofence values");
-    }
-
     const newClass = new Class({
         name,
         description,
         createdBy: req.user._id,
-        geofence
+        students: []
     });
 
     await newClass.save().catch(err => {

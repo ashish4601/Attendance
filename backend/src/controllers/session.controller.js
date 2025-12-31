@@ -25,6 +25,21 @@ const createSession = asyncHandler(async (req, res) => {
     if (!geofence?.lat || !geofence?.lng || !geofence?.radius) {
         throw new ApiError(400, "Session geofence is required");
     }
+    if (
+        typeof geofence.lat !== "number" ||
+        typeof geofence.lng !== "number" ||
+        typeof geofence.radius !== "number"
+    ) {
+        throw new ApiError(400, "Geofence values must be numbers");
+    }
+
+    if (
+        geofence.lat < -90 || geofence.lat > 90 ||
+        geofence.lng < -180 || geofence.lng > 180 ||
+        geofence.radius <= 0
+    ) {
+        throw new ApiError(400, "Invalid geofence values");
+    }
 
     const classObj = await Class.findById(classId);
     if (!classObj) {
