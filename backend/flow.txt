@@ -8,3 +8,40 @@ controllers:
     attendance: markAttendance, getSessionAttendance
     user: registerUser, loginUser,logOutUser,refreshAccessToken,changeCurrentPassword,getCurrentUser,updateAccountDetails,updateUserProfileImage,getUserById
     faceData: enrollFace, getFaceStatus, resetFaceData 
+routes:
+  admin:
+    POST   /admin/create-user              createUserByAdmin   verifyJWT,verifyAdmin
+
+  auth (user):
+    POST   /users/register              registerUser        
+    POST   /users/login                 loginUser            
+    POST   /users/logout                logOutUser           verifyJWT
+    POST   /users/refresh-token         refreshAccessToken   verifyJWT
+    PATCH  /users/change-password       changeCurrentPassword   verifyJWT
+
+    GET    /users/me                   getCurrentUser   verifyJWT
+    PATCH  /users/me                   updateAccountDetails   verifyJWT
+    PATCH  /users/me/profile-image    updateUserProfileImage   verifyJWT
+    GET    /users/:userId              getUserById  verifyJWT  //may need to delete or cchange
+
+  class:
+    POST   /classes                 createClass         verifyJWT, verifyAdmin
+    POST   /classes/:classId/students  addStudentToClass    verifyJWT, verifyAdmin
+
+  session:
+    POST   /sessions                   createSession    verifyJWT, verifyAdmin
+    PATCH  /sessions/:sessionId/end    forceEndSession  verifyJWT, verifyAdmin
+
+  student:
+    GET    /students/classes           getStudentClasses        verifyJWT, verifyStudent
+    GET    /students/classes/:classId/active-session getActiveSessionByClass    verifyJWT, verifyStudent
+    GET    /students/attendance        getMyAttendance          verifyJWT, verifyStudent
+
+  attendance:
+    POST   /attendance                 markAttendance                   verifyJWT, verifyStudent
+    GET    /attendance/sessions/:sessionId    getSessionAttendance      verifyJWT, verifyAdmin
+
+  faceData:
+    POST   /face/enroll                enrollFace       verifyJWT, verifyStudent
+    GET    /face/status                getFaceStatus    verifyJWT, verifyStudent
+    DELETE /face/reset                 resetFaceData    verifyJWT, verifyAdmin

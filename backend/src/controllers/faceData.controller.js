@@ -1,7 +1,4 @@
-// //faceData controller (optional):
-//   - enrollFace
-//   - updateFace
-//   - getFaceStatus
+
 import { isValidObjectId } from "mongoose";
 import { FaceData } from "../models/faceData.models.js";
 import { ApiError } from "../utils/ApiError.js";

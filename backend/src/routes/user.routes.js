@@ -31,9 +31,9 @@ router.route("/login").post(loginUser);
 router.route("/logout").post(verifyJWT, logOutUser);
 router.route("/refresh-token").post(refreshAccessToken);
 router.route("/change-password").post(verifyJWT, changeCurrentPassword);
-router.route("/current-user").get(verifyJWT, getCurrentUser);
-router.route("/update-account").patch(verifyJWT, updateAccountDetails);
+router.route("/me").get(verifyJWT, getCurrentUser);
+router.route("/me").patch(verifyJWT, updateAccountDetails);
 router.route("/user/:userId").get(verifyJWT, getUserById);
-router.route("/update-profile-image").patch(verifyJWT, upload.single("profileImage"), updateUserProfileImage);
+router.route("/me/profile-image").patch(verifyJWT, upload.single("profileImage"), updateUserProfileImage);
 export default router;
 
