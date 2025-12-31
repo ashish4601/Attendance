@@ -91,6 +91,7 @@ const markAttendance = asyncHandler(async (req, res) => {
     }
 
     const similarity = cosineSimilarity(faceEmbedding, faceData.embedding);
+
     if (similarity < 0.8) {
         throw new ApiError(403, "Face mismatch");
     }
