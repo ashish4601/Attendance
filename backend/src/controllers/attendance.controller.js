@@ -8,21 +8,17 @@ import { cosineSimilarity } from "../utils/faceRecognition.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-
-
+import { getFaceDescriptor } from "../../face_detection/src/calculateEmbedding.js";
 const markAttendance = asyncHandler(async (req, res) => {
-    const { classId, sessionId, faceEmbedding, blinkVerified, location } = req.body;
+    const { classId, sessionId, faceImgBase64, blinkVerified, location } = req.body;
     if (!isValidObjectId(classId) || !isValidObjectId(sessionId)) {
         throw new ApiError(400, "Invalid classId or sessionId");
     }
 
-    if (!Array.isArray(faceEmbedding) || faceEmbedding.length === 0) {
-        throw new ApiError(400, "Invalid faceEmbedding");
+    if (!faceImgBase64) {
+        throw new ApiError(400, "Face image is required");
     }
 
-    if (blinkVerified !== true) {
-        throw new ApiError(403, "Blink verification failed");
-    }
 
     if (
         !location ||
@@ -89,10 +85,12 @@ const markAttendance = asyncHandler(async (req, res) => {
     if (!faceData) {
         throw new ApiError(403, "Face not enrolled");
     }
+  
+    const faceEmbedding = await getFaceDescriptor(faceImgBase64);
+    const similarity = cosineSimilarity(faceEmbedding, faceData.faceEmbedding);
+    console.log("check:", similarity);
 
-    const similarity = cosineSimilarity(faceEmbedding, faceData.embedding);
-
-    if (similarity < 0.8) {
+    if (similarity < 0.9) {
         throw new ApiError(403, "Face mismatch");
     }
 
@@ -150,4 +148,4 @@ const getSessionAttendance = asyncHandler(async (req, res) => {
 });
 
 
-export { markAttendance , getSessionAttendance };
+export { markAttendance, getSessionAttendance };

@@ -4,10 +4,11 @@ import { FaceData } from "../models/faceData.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { getFaceDescriptor } from "../../face_detection/src/calculateEmbedding.js";
 const enrollFace = asyncHandler(async (req, res) => {
-    const { faceEmbedding } = req.body;
-    if (!Array.isArray(faceEmbedding) || faceEmbedding.length === 0) {
-        throw new ApiError(400, "Invalid faceEmbedding");
+    const { faceImgBase64 } = req.body;
+    if (!faceImgBase64) {
+        throw new ApiError(400, "Face image is required");
     }
     if (!req.user || req.user.role !== "student") {
         throw new ApiError(403, "Forbidden");
@@ -16,9 +17,11 @@ const enrollFace = asyncHandler(async (req, res) => {
     if (faceData) {
         throw new ApiError(409, "Face data already enrolled");
     }
+    const faceEmbedding = await getFaceDescriptor(faceImgBase64);
+     
     faceData = new FaceData({
         userId: req.user._id,
-        faceEmbedding
+         faceEmbedding: Array.from(faceEmbedding)
     });
     await faceData.save();
     return res.status(201).json(

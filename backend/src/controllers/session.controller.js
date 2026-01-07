@@ -95,8 +95,39 @@ const forceEndSession = asyncHandler(async (req, res) => {
     );
 });
 
+const getSessionByClass = asyncHandler(async (req, res) => {
+
+    const { classId } = req.params;
+    if (!isValidObjectId(classId)) {
+        throw new ApiError(400, "Invalid classId");
+    }
+    const sessions = await Session.find({ classId });
+
+    return res.status(200).json(
+        new ApiResponse(200, sessions, "Sessions fetched successfully")
+    );
+});
+
+const getSessionByCreator = asyncHandler(async (req, res) => {
+ 
+    if (req.user.role !== "admin") {
+        throw new ApiError(403, "Only admin can access this resource");
+    }
+    const classes = await Class.find({ createdBy: req.user._id }).select("_id name");
+    const classIds = classes.map(c => c._id);
+    const sessions = await Session.find({ classId: { $in: classIds } })
+        .populate("classId", "name");
+    return res.status(200).json(
+        new ApiResponse(200, sessions, "Sessions fetched successfully")
+    );
+    
+});
+
+
 
 export {
     createSession,
-    forceEndSession
+    forceEndSession,
+    getSessionByClass,
+    getSessionByCreator
 };

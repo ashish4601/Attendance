@@ -3,6 +3,7 @@ import { Class } from "../models/class.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { User } from "../models/user.models.js";
 
 const createClass = asyncHandler(async (req, res) => {
     const { name, description} = req.body;
@@ -36,11 +37,11 @@ const createClass = asyncHandler(async (req, res) => {
 
 const addStudentToClass = asyncHandler(async (req, res) => {
     const { classId } = req.params;
-    const { studentId } = req.body;
+    const { studentEmail } = req.body;
 
 
-    if (!isValidObjectId(classId) || !isValidObjectId(studentId) || req.user.role !== 'admin') {
-        throw new ApiError(400, "Invalid classId or studentId");
+    if (!isValidObjectId(classId) || req.user.role !== 'admin') {
+        throw new ApiError(400, "Invalid classId ");
     }
 
     const classObj = await Class.findById(classId);
@@ -48,11 +49,18 @@ const addStudentToClass = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Class not found");
     }
 
-    if (classObj.students.includes(studentId)) {
-        throw new ApiError(409, "Student already in class");
+    if (!studentEmail) {
+        throw new ApiError(400, "Student email is required");
     }
-
-    classObj.students.push(studentId);
+    // Simulate fetching user by email
+    const studentUser = await User.findOne({ email: studentEmail });
+    if (!studentUser) {
+        throw new ApiError(404, "Student user not found");
+    }
+    if (classObj.students.includes(studentUser._id)) {
+        throw new ApiError(409, "Student already enrolled in the class");
+    }
+    classObj.students.push(studentUser._id);
     await classObj.save();
 
     return res.status(200).json(
@@ -60,5 +68,17 @@ const addStudentToClass = asyncHandler(async (req, res) => {
     );
 });
 
+const getClassesByCreator = asyncHandler(async (req, res) => {
+    if (req.user.role !== "admin") {
+        throw new ApiError(403, "Only admin can access this resource");
+    }
+    const classes = await Class.find({ createdBy: req.user._id });
+    return res.status(200).json(
+        new ApiResponse(200, classes, "Classes fetched successfully")
+    );
+});
 
-export { createClass, addStudentToClass };
+
+
+
+export { createClass, addStudentToClass , getClassesByCreator };

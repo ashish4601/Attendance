@@ -35,7 +35,7 @@ const attendanceSchema = new mongoose.Schema(
     ,
     similarityScore: {
       type: Number,
-      required: true
+
     },
     timestamp: {
       type: Date,

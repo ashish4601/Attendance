@@ -5,15 +5,31 @@ import cors from "cors"
 const app = express();
 
 
-app.use(cors(
-    {
-        origin: process.env.CORS_ORIGIN,
-        credentials: true
-    }
-))
-app.use(express.json());
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",")
+  : [];
 
-app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow server-to-server, Postman, mobile apps
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error(`CORS blocked for origin: ${origin}`),
+        false
+      );
+    },
+    credentials: true,
+  })
+);
+app.use(express.json({limit:"5mb"}));
+
+app.use(express.urlencoded({limit:"5mb", extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
